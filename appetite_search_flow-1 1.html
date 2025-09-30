@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appetite Search - End-to-End Flow Diagram</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .flow-container {
+            padding: 40px;
+            background: #f8f9fa;
+        }
+        
+        .flow-step {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            border-left: 6px solid;
+        }
+        
+        .flow-step:hover {
+            transform: translateX(5px);
+        }
+        
+        .step-1 { border-left-color: #e74c3c; }
+        .step-2 { border-left-color: #f39c12; }
+        .step-3 { border-left-color: #3498db; }
+        .step-4 { border-left-color: #9b59b6; }
+        .step-5 { border-left-color: #1abc9c; }
+        .step-6 { border-left-color: #34495e; }
+        .step-7 { border-left-color: #27ae60; }
+        
+        .step-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .step-content {
+            padding: 25px 30px;
+        }
+        
+        .step-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid #4a5568;
+        }
+        
+        .json-key {
+            color: #68d391;
+        }
+        
+        .json-string {
+            color: #fbb6ce;
+        }
+        
+        .process-details {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .process-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .process-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .process-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .process-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .flow-arrow {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2rem;
+            color: #6c757d;
+            position: relative;
+        }
+        
+        .flow-arrow::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, transparent, #6c757d, transparent);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .highlight-box h4 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+            font-weight: 600;
+        }
+        
+        .tag {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        
+        .tag.success { background: #28a745; }
+        .tag.warning { background: #ffc107; color: #212529; }
+        .tag.danger { background: #dc3545; }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .result-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .result-header {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .result-details {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .flow-container {
+                padding: 20px;
+            }
+            
+            .step-header {
+                padding: 15px 20px;
+            }
+            
+            .step-content {
+                padding: 20px;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Appetite Search Flow</h1>
+            <p>End-to-End Process Diagram | Search API Architecture</p>
+        </div>
+        
+        <div class="flow-container">
+            
+            <!-- Step 1: User Interaction -->
+            <div class="flow-step step-1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">User Interaction (Trigger Point)</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        User enters business type keyword/text and optional filters through the Agent Portal interface.
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>User Input Examples:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Business Type:</strong> "barber", "restaurant", "auto repair"</li>
+                            <li><strong>State Filter:</strong> "NY", "CA", "TX" (optional)</li>
+                            <li><strong>NAICS Code:</strong> "812111" (optional)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>Interface Components:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">🔍</span> Search text input field</li>
+                            <li><span class="process-icon">📍</span> State dropdown filter</li>
+                            <li><span class="process-icon">#</span> NAICS code input (optional)</li>
+                            <li><span class="process-icon">🔘</span> Search trigger button</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 2: Request Received -->
+            <div class="flow-step step-2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Request Received (Search API)</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        The Search API receives and validates the incoming request payload with search parameters.
+                    </div>
+                    
+                    <div class="code-block">
+<span class="json-key">POST</span> /api/search/appetite<br><br>
+{<br>
+  <span class="json-key">"searchText"</span>: <span class="json-string">"barber"</span>,<br>
+  <span class="json-key">"state"</span>: <span class="json-string">"NY"</span>,<br>
+  <span class="json-key">"naicsCode"</span>: <span class="json-string">null</span><br>
+}
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>API Processing:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">✓</span> Validate request format</li>
+                            <li><span class="process-icon">🔐</span> Authenticate user via APIM</li>
+                            <li><span class="process-icon">📝</span> Log search event for analytics</li>
+                            <li><span class="process-icon">⚡</span> Initialize search pipeline</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 3: Text Search & Classification -->
+            <div class="flow-step step-3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Text Search & Classification Matching</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        The API performs intelligent text matching and business classification lookup using multiple data sources.
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>Two-Way Matching Process:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">🔤</span> <strong>Keyword Search:</strong> Maps "barber" → "Barber Shops", "Men's Haircut", "Beauty Salons"</li>
+                            <li><span class="process-icon">#</span> <strong>NAICS Lookup:</strong> Finds codes linked to "barber" (812111, 812112)</li>
+                            <li><span class="process-icon">🔍</span> <strong>Fuzzy Matching:</strong> Handles typos and variations</li>
+                            <li><span class="process-icon">📚</span> <strong>Synonym Expansion:</strong> Includes related business types</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Data Sources Used:</h4>
+                        <span class="tag">Azure Cognitive Search</span>
+                        <span class="tag">NAICS/SIC Database</span>
+                        <span class="tag">Business Classification DB</span>
+                        <span class="tag">Carrier Rule Repository</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 4: Filtering Layer -->
+            <div class="flow-step step-4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Filtering Layer</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        Apply user-specified filters to narrow down the search results to relevant matches only.
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>Filter Application:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">📍</span> <strong>State Filter:</strong> Only appetite rules defined for NY are included</li>
+                            <li><span class="process-icon">#</span> <strong>NAICS Filter:</strong> Narrow results to specific classification (if provided)</li>
+                            <li><span class="process-icon">🏢</span> <strong>Carrier Filter:</strong> Apply tenant-specific rules</li>
+                            <li><span class="process-icon">📅</span> <strong>Date Filter:</strong> Only active/current appetite rules</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Example Filtering:</h4>
+                        <p style="margin: 0;">
+                            <strong>Before:</strong> 50 business types found for "barber"<br>
+                            <strong>After State Filter (NY):</strong> 12 business types available in New York<br>
+                            <strong>After Active Rules Filter:</strong> 8 business types with current appetite rules
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 5: Appetite Rules Retrieval -->
+            <div class="flow-step step-5">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Appetite Rules Retrieval</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        For each matched business type/NAICS, the API queries the carrier appetite repository to determine eligibility status.
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>Rules Engine Processing:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">🎯</span> Query appetite rules for each matched NAICS code</li>
+                            <li><span class="process-icon">⚖️</span> Evaluate business type against carrier criteria</li>
+                            <li><span class="process-icon">🏷️</span> Determine appetite status for each match</li>
+                            <li><span class="process-icon">📊</span> Calculate confidence/match scores</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-header">Appetite Status Types:</div>
+                            <div class="result-details">
+                                <span class="tag success">Eligible</span> - Carrier accepts this risk<br>
+                                <span class="tag warning">Restricted</span> - Accepted with conditions<br>
+                                <span class="tag danger">Declined</span> - Not in underwriting appetite
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">Data Sources:</div>
+                            <div class="result-details">
+                                • Azure SQL Database (rules)<br>
+                                • Azure Cosmos DB (metadata)<br>
+                                • Redis Cache (hot rules)<br>
+                                • Rule snapshots
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 5.5: Gemini AI Recommendation Engine -->
+            <div class="flow-step step-5" style="border-left-color: #ff6b35;">
+                <div class="step-header">
+                    <div class="step-number" style="background: linear-gradient(135deg, #ff6b35, #f7931e);">5.5</div>
+                    <div class="step-title">🤖 Gemini AI Recommendation Engine</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        Gemini AI analyzes appetite scores and provides intelligent recommendations for score improvement and optimization strategies.
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🔐 Gemini API Configuration:</h4>
+                        <div class="code-block">
+<span class="json-key">// Azure Key Vault Configuration (Production)</span><br>
+<span class="json-key">GEMINI_API_KEY</span> = <span class="json-string">"@Microsoft.KeyVault(SecretUri=https://certsigning.vault.azure.net/secrets/gemini-api-key/3b0e993cf39e4a28a44d736f9c1f30e8)"</span><br><br>
+<span class="json-key">// Environment Variable (Development)</span><br>
+<span class="json-key">GEMINI_API_KEY</span> = <span class="json-string">"${GEMINI_API_KEY}"</span><br><br>
+<span class="json-key">// Azure App Configuration</span><br>
+<span class="json-key">GEMINI_API_KEY</span> = <span class="json-string">"@Microsoft.AppConfiguration(Endpoint=https://your-appconfig.azconfig.io;Key=gemini-api-key)"</span>
+                        </div>
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>AI Analysis Pipeline:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">🧠</span> <strong>Score Analysis:</strong> Evaluate current appetite score against thresholds</li>
+                            <li><span class="process-icon">📈</span> <strong>Improvement Strategies:</strong> Generate actionable recommendations for low scores</li>
+                            <li><span class="process-icon">🎯</span> <strong>Optimization Tips:</strong> Suggest ways to enhance high-performing scores</li>
+                            <li><span class="process-icon">📊</span> <strong>Risk Assessment:</strong> Provide risk mitigation strategies</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="code-block">
+<span class="json-key">POST</span> /api/gemini/recommendations<br><br>
+{<br>
+  <span class="json-key">"businessType"</span>: <span class="json-string">"Barber Shops"</span>,<br>
+  <span class="json-key">"naicsCode"</span>: <span class="json-string">"812111"</span>,<br>
+  <span class="json-key">"currentScore"</span>: 0.45,<br>
+  <span class="json-key">"appetiteStatus"</span>: <span class="json-string">"Restricted"</span>,<br>
+  <span class="json-key">"restrictions"</span>: [<span class="json-string">"Revenue < $300K"</span>, <span class="json-string">"Limited services"</span>],<br>
+  <span class="json-key">"state"</span>: <span class="json-string">"NY"</span>,<br>
+  <span class="json-key">"carrierCriteria"</span>: {<br>
+    <span class="json-key">"preferredRevenue"</span>: <span class="json-string">">$500K"</span>,<br>
+    <span class="json-key">"serviceTypes"</span>: [<span class="json-string">"Full-service"</span>, <span class="json-string">"Specialized"</span>]<br>
+  }<br>
+}
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-header">🔴 Low Score Recommendations:</div>
+                            <div class="result-details">
+                                <strong>Score: 0.45 (Restricted)</strong><br>
+                                • Increase revenue to $500K+<br>
+                                • Expand service offerings<br>
+                                • Implement safety protocols<br>
+                                • Consider premium adjustments
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">🟡 Medium Score Optimization:</div>
+                            <div class="result-details">
+                                <strong>Score: 0.78 (Restricted)</strong><br>
+                                • Document compliance procedures<br>
+                                • Enhance risk management<br>
+                                • Optimize business operations<br>
+                                • Leverage carrier relationships
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">🟢 High Score Enhancement:</div>
+                            <div class="result-details">
+                                <strong>Score: 0.95 (Eligible)</strong><br>
+                                • Maintain current standards<br>
+                                • Explore premium discounts<br>
+                                • Consider coverage expansion<br>
+                                • Build long-term relationships
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🎯 Gemini AI Capabilities:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Contextual Analysis:</strong> Understands business context and market conditions</li>
+                            <li><strong>Predictive Insights:</strong> Forecasts score improvement potential</li>
+                            <li><strong>Personalized Recommendations:</strong> Tailored to specific carrier criteria</li>
+                            <li><strong>Real-time Learning:</strong> Adapts based on historical success patterns</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>🔐 API Key Management Best Practices:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">🔒</span> <strong>Production:</strong> Store in Azure Key Vault with managed identity access</li>
+                            <li><span class="process-icon">🛡️</span> <strong>Development:</strong> Use environment variables or Azure App Configuration</li>
+                            <li><span class="process-icon">🔄</span> <strong>Rotation:</strong> Implement automatic key rotation every 90 days</li>
+                            <li><span class="process-icon">📊</span> <strong>Monitoring:</strong> Track API usage and rate limits</li>
+                            <li><span class="process-icon">🚨</span> <strong>Alerts:</strong> Set up alerts for API failures or quota exceeded</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="code-block">
+<span class="json-key">// appsettings.json (Development)</span><br>
+{<br>
+  <span class="json-key">"GeminiAI"</span>: {<br>
+    <span class="json-key">"ApiKey"</span>: <span class="json-string">"${GEMINI_API_KEY}"</span>,<br>
+    <span class="json-key">"Model"</span>: <span class="json-string">"gemini-pro"</span>,<br>
+    <span class="json-key">"MaxTokens"</span>: 2048,<br>
+    <span class="json-key">"Temperature"</span>: 0.3<br>
+  }<br>
+}<br><br>
+<span class="json-key">// Azure Key Vault Secret</span><br>
+<span class="json-key">Secret Name:</span> <span class="json-string">"gemini-api-key"</span><br>
+<span class="json-key">Secret Value:</span> <span class="json-string">"AIzaSyC..."</span> <span class="json-key">(Your actual Gemini API key)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 6: Response Preparation -->
+            <div class="flow-step step-6">
+                <div class="step-header">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Response Preparation</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        The API compiles and structures the search results with all relevant business information, appetite status, and Gemini AI recommendations.
+                    </div>
+                    
+                    <div class="process-details">
+                        <strong>Response Compilation:</strong>
+                        <ul class="process-list">
+                            <li><span class="process-icon">📋</span> Compile business type information</li>
+                            <li><span class="process-icon">#</span> Include NAICS codes and descriptions</li>
+                            <li><span class="process-icon">📍</span> Add state/geographic information</li>
+                            <li><span class="process-icon">✅</span> Include appetite rule decisions</li>
+                            <li><span class="process-icon">🏷️</span> Add carrier-specific metadata</li>
+                            <li><span class="process-icon">📊</span> Calculate relevance scores</li>
+                            <li><span class="process-icon">🤖</span> <strong>Integrate Gemini AI recommendations</strong></li>
+                            <li><span class="process-icon">📈</span> <strong>Include score improvement strategies</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🤖 Gemini AI Integration:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Real-time Analysis:</strong> AI processes each result for recommendations</li>
+                            <li><strong>Score-based Insights:</strong> Different strategies for low/medium/high scores</li>
+                            <li><strong>Actionable Guidance:</strong> Specific steps to improve appetite status</li>
+                            <li><strong>Risk Mitigation:</strong> Strategies to address restrictions and limitations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Performance Optimization:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Caching:</strong> Hot search results cached in Redis</li>
+                            <li><strong>Pagination:</strong> Large result sets paginated</li>
+                            <li><strong>Scoring:</strong> Results ranked by relevance</li>
+                            <li><strong>Compression:</strong> Response optimized for network transfer</li>
+                            <li><strong>AI Caching:</strong> Gemini recommendations cached for similar queries</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flow-arrow">⬇️</div>
+            
+            <!-- Step 7: Response Example -->
+            <div class="flow-step step-7">
+                <div class="step-header">
+                    <div class="step-number">7</div>
+                    <div class="step-title">Response Example</div>
+                </div>
+                <div class="step-content">
+                    <div class="step-description">
+                        Final structured JSON response sent back to the Agent Portal with search results and appetite status.
+                    </div>
+                    
+                    <div class="code-block">
+{<br>
+  <span class="json-key">"searchQuery"</span>: <span class="json-string">"barber"</span>,<br>
+  <span class="json-key">"state"</span>: <span class="json-string">"NY"</span>,<br>
+  <span class="json-key">"totalResults"</span>: 2,<br>
+  <span class="json-key">"geminiAIEnabled"</span>: <span class="json-string">true</span>,<br>
+  <span class="json-key">"results"</span>: [<br>
+    {<br>
+      <span class="json-key">"businessType"</span>: <span class="json-string">"Barber Shops"</span>,<br>
+      <span class="json-key">"naics"</span>: <span class="json-string">"812111"</span>,<br>
+      <span class="json-key">"state"</span>: <span class="json-string">"NY"</span>,<br>
+      <span class="json-key">"appetiteRule"</span>: <span class="json-string">"Eligible"</span>,<br>
+      <span class="json-key">"confidenceScore"</span>: 0.95,<br>
+      <span class="json-key">"carrierName"</span>: <span class="json-string">"ABC Insurance"</span>,<br>
+      <span class="json-key">"geminiRecommendations"</span>: {<br>
+        <span class="json-key">"scoreCategory"</span>: <span class="json-string">"High"</span>,<br>
+        <span class="json-key">"improvementPotential"</span>: <span class="json-string">"Limited"</span>,<br>
+        <span class="json-key">"recommendations"</span>: [<br>
+          <span class="json-string">"Maintain current business standards and safety protocols"</span>,<br>
+          <span class="json-string">"Consider premium discounts for long-term relationships"</span>,<br>
+          <span class="json-string">"Explore coverage expansion opportunities"</span>,<br>
+          <span class="json-string">"Leverage high score for better carrier relationships"</span><br>
+        ],<br>
+        <span class="json-key">"riskMitigation"</span>: [<span class="json-string">"Continue compliance monitoring"</span>, <span class="json-string">"Regular safety audits"</span>]<br>
+      }<br>
+    },<br>
+    {<br>
+      <span class="json-key">"businessType"</span>: <span class="json-string">"Beauty Salons (Hair Styling & Barber Services)"</span>,<br>
+      <span class="json-key">"naics"</span>: <span class="json-string">"812112"</span>,<br>
+      <span class="json-key">"state"</span>: <span class="json-string">"NY"</span>,<br>
+      <span class="json-key">"appetiteRule"</span>: <span class="json-string">"Restricted"</span>,<br>
+      <span class="json-key">"confidenceScore"</span>: 0.78,<br>
+      <span class="json-key">"restrictions"</span>: [<span class="json-string">"Revenue < $500K"</span>, <span class="json-string">"No chemical treatments"</span>],<br>
+      <span class="json-key">"geminiRecommendations"</span>: {<br>
+        <span class="json-key">"scoreCategory"</span>: <span class="json-string">"Medium"</span>,<br>
+        <span class="json-key">"improvementPotential"</span>: <span class="json-string">"High"</span>,<br>
+        <span class="json-key">"recommendations"</span>: [<br>
+          <span class="json-string">"Increase revenue to $500K+ to meet carrier criteria"</span>,<br>
+          <span class="json-string">"Expand service offerings beyond basic hair styling"</span>,<br>
+          <span class="json-string">"Implement comprehensive safety protocols"</span>,<br>
+          <span class="json-string">"Document all compliance procedures"</span><br>
+        ],<br>
+        <span class="json-key">"riskMitigation"</span>: [<span class="json-string">"Avoid chemical treatments until approved"</span>, <span class="json-string">"Focus on revenue growth strategies"</span>],<br>
+        <span class="json-key">"estimatedScoreImprovement"</span>: <span class="json-string">"0.78 → 0.92 (with recommendations)"</span><br>
+      }<br>
+    }<br>
+  ],<br>
+  <span class="json-key">"aiInsights"</span>: {<br>
+    <span class="json-key">"overallTrend"</span>: <span class="json-string">"Positive appetite for barber services in NY"</span>,<br>
+    <span class="json-key">"marketOpportunity"</span>: <span class="json-string">"High demand for specialized barber services"</span>,<br>
+    <span class="json-key">"riskFactors"</span>: [<span class="json-string">"Revenue limitations"</span>, <span class="json-string">"Service restrictions"</span>]<br>
+  }<br>
+}
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-header">✅ Eligible Result + AI Insights</div>
+                            <div class="result-details">
+                                <strong>Barber Shops (812111)</strong><br>
+                                Full appetite acceptance<br>
+                                High confidence score (0.95)<br>
+                                <span style="color: #28a745; font-weight: 600;">🤖 AI: Maintain standards, explore premium discounts</span><br>
+                                Ready for submission
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">⚠️ Restricted Result + AI Recommendations</div>
+                            <div class="result-details">
+                                <strong>Beauty Salons (812112)</strong><br>
+                                Conditional acceptance<br>
+                                Revenue and service restrictions<br>
+                                <span style="color: #ff6b35; font-weight: 600;">🤖 AI: Increase revenue to $500K+, expand services</span><br>
+                                <span style="color: #007bff;">📈 Score improvement: 0.78 → 0.92</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🎯 Search Complete with AI Intelligence!</h4>
+                        <p style="margin: 0;">
+                            The Agent Portal now displays enhanced results with Gemini AI recommendations, allowing brokers to see 
+                            exactly which business types match their search, the carrier's appetite status, and <strong>intelligent 
+                            recommendations for score improvement</strong>. This enables data-driven decision-making, strategic 
+                            business planning, and faster submission processing with actionable insights.
+                        </p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🤖 Gemini AI Benefits:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li><strong>Score Optimization:</strong> Specific strategies to improve low/medium appetite scores</li>
+                            <li><strong>Risk Mitigation:</strong> Proactive recommendations to address restrictions</li>
+                            <li><strong>Business Growth:</strong> Guidance for expanding services and revenue</li>
+                            <li><strong>Market Intelligence:</strong> Insights into carrier preferences and market trends</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        // Add smooth scroll-in animation
+        const steps = document.querySelectorAll('.flow-step');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        steps.forEach(step => {
+            step.style.opacity = '0';
+            step.style.transform = 'translateY(30px)';
+            step.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(step);
+        });
+        
+        // Add click interaction for code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+            block.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent.trim()).then(() => {
+                    const originalBg = this.style.background;
+                    this.style.background = '#2d5a3d';
+                    setTimeout(() => {
+                        this.style.background = originalBg;
+                    }, 200);
+                });
+            });
+            
+            block.style.cursor = 'pointer';
+            block.title = 'Click to copy code';
+        });
+    </script>
+</body>
+</html>
