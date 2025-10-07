@@ -119,7 +119,7 @@
           font-size:1.125rem;
           font-weight:600;
         }
-        .table-container { overflow-x:auto; }
+        .table-container { overflow-x:auto; overflow-y:visible; }
         table {
           width:100%;
           border-collapse:collapse;
@@ -176,21 +176,100 @@
         .tooltip .tooltiptext {
           visibility: hidden;
           width: 300px;
-          background-color: #333;
+          background-color: #1f2937;
           color: #fff;
           text-align: left;
-          border-radius: 6px;
-          padding: 8px;
+          border-radius: 8px;
+          padding: 12px;
           position: absolute;
-          z-index: 1;
-          bottom: 125%;
-          left: 50%;
-          margin-left: -150px;
-          font-size: 12px;
-          line-height: 1.4;
+          z-index: 99999;
+          top: -10px;
+          right: 100%;
+          margin-right: 10px;
+          font-size: 13px;
+          line-height: 1.5;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          white-space: normal;
+          word-wrap: break-word;
         }
         .tooltip:hover .tooltiptext {
           visibility: visible;
+        }
+
+        /* AI Insights */
+        .ai-insights-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+        .ai-insight-card {
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          padding: 1.5rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .ai-insight-card.eligible {
+          border-left: 4px solid #10b981;
+        }
+        .ai-insight-card.restricted {
+          border-left: 4px solid #f59e0b;
+        }
+        .insight-header {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.75rem;
+        }
+        .insight-icon {
+          font-size: 1.2rem;
+        }
+        .insight-title {
+          font-weight: 600;
+          font-size: 1rem;
+        }
+        .insight-business {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1f2937;
+          margin-bottom: 0.5rem;
+        }
+        .insight-status {
+          font-size: 0.9rem;
+          color: #6b7280;
+          margin-bottom: 0.5rem;
+        }
+        .insight-score {
+          font-size: 0.9rem;
+          color: #6b7280;
+          margin-bottom: 1rem;
+        }
+        .ai-recommendation {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.5rem;
+          background: #f8fafc;
+          padding: 0.75rem;
+          border-radius: 8px;
+          margin-bottom: 0.75rem;
+        }
+        .ai-recommendation.eligible {
+          color: #059669;
+        }
+        .ai-recommendation.restricted {
+          color: #d97706;
+        }
+        .score-improvement {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: #3b82f6;
+        }
+        .ready-status {
+          font-size: 0.9rem;
+          color: #6b7280;
         }
 
         /* Pagination */
@@ -372,17 +451,39 @@
     align-items: center;
     gap: .5rem;
 }
+
+/* Gemini Cards Styling */
+#geminiCards {
+    overflow: visible;
+    z-index: 100;
+}
+#geminiCards .card {
+    min-height: auto;
+    padding: 16px;
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+#geminiCards .card h3 {
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+#geminiCards .card p {
+    margin: 0;
+    line-height: 1.5;
+    color: #374151;
+}
     </style>
 </head>
 <body>
 
 <!-- Header -->
 <div class="header">
-    <h1>Companies</h1>
+
 </div>
 
 <div class="main-content">
-    <h1 class="page-title">Companies</h1>
+    <h1 class="page-title">Appetite Checker</h1>
 
     <!-- Filters -->
     <!-- Filters -->
@@ -415,7 +516,7 @@
     <!-- Results Table -->
     <section class="results-section">
         <div class="results-header">
-            <h3 class="results-title">Company Data</h3>
+            <h3 class="results-title">Appetite Data</h3>
         </div>
         <div class="table-container">
             <table>
@@ -423,10 +524,10 @@
                 <tr>
                     <th>Request ID</th>
                     <th>Confidence Code</th>
-                    <th>DUNS #</th>
-                    <th>NAICS 1 Description</th>
-                    <th>NAICS 1 Code</th>
-                    <th>NAICS 2 Description</th>
+                    <th>CLASS CODE</th>
+                    <th>Description</th>
+                    <th>NAICS Code</th>
+                    <th>NAICS Description</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -474,17 +575,15 @@
         </div>
     </section>
 
-    <!-- Gemini AI Recommendation Engine -->
-    <div class="flow-step step-5" style="border-left-color: #ff6b35;">
-        <div class="step-header">
-            <div class="step-number" style="background: linear-gradient(135deg, #ff6b35, #f7931e);"></div>
-            <div class="step-title">🤖 Gemini AI Recommendation Engine</div>
-        </div>
-        <div class="step-content">
-            <div id="geminiCards"></div>
-        </div>
-    </div>
-    <div class="flow-arrow">⬇️</div>
+
+
+    <!-- AI Insights Section -->
+    <section class="filter-section">
+        <h3 class="results-title">🤖 AI Insights & Recommendations</h3>
+        <div id="aiInsights" class="ai-insights-grid"></div>
+    </section>
+
+
 
 </div>
 
@@ -506,6 +605,7 @@
         populateStateToolbar();
         feather.replace();
         initTrends();
+        generateAIInsights();
       })
       .catch(err => console.error('Error fetching companies:', err));
 
@@ -524,7 +624,7 @@
           <td>${c.appendedData?.['NAICS 2 Description'] ?? 'null'}</td>
           <td>
             ${confidence < 5
-              ? `<div class="tooltip" onclick="getRecommendation(${idx})">
+              ? `<div class="tooltip" onclick="getRecommendation('${c.matchingData?.['Request ID'] || idx}', '${(c.appendedData?.['NAICS 1 Description'] || 'Business').replace(/'/g, "\\'")}}', '${c.appendedData?.['NAICS 1 Code'] || 'N/A'}', '${c.matchingData?.['Confidence Code'] || 'N/A'}')">
                    <i data-feather="alert-circle" style="color:#ef4444;"></i>
                    <span class="tooltiptext"><strong>Not Eligible</strong><br>Reason: Low confidence score<br>Recommendation: Improve data quality</span>
                  </div>`
@@ -571,6 +671,8 @@
     function clearFilters() {
       searchInput.value = '';
       stateFilter.value = '';
+      document.getElementById('restrictedCard').style.display = 'none';
+      document.getElementById('improvementCard').style.display = 'none';
       populateTable(companiesData);
     }
 
@@ -690,11 +792,37 @@
       });
     }
 
-    function getRecommendation(idx) {
-      const company = companiesData[idx];
+    function getRecommendation(requestId, businessName, naicsCode, confidenceCode) {
       const cardsContainer = document.getElementById('geminiCards');
+      const restrictedCard = document.getElementById('restrictedCard');
+      const improvementCard = document.getElementById('improvementCard');
       
-      cardsContainer.innerHTML = '<div>Loading short recommendation...</div>';
+
+      restrictedCard.style.display = 'block';
+      improvementCard.style.display = 'none';
+      
+      document.querySelector('#aiInsights').scrollIntoView({ behavior: 'smooth' });
+      
+      restrictedCard.innerHTML = `
+        <div class="ai-insight-card restricted">
+          <div class="insight-header">
+            <span class="insight-icon">⚠️</span>
+            <span class="insight-title">Restricted Result + AI Recommendations</span>
+          </div>
+          <div class="insight-business">${businessName} (${naicsCode})</div>
+          <div class="insight-status">Conditional acceptance</div>
+          <div class="insight-score">Low confidence score (${confidenceCode})</div>
+          <div style="margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+            <div style="font-weight: 600; margin-bottom: 6px;">Why Not Eligible:</div>
+            <div id="whyNotEligible" style="color: #374151;">Loading reason...</div>
+          </div>
+          <div class="ai-recommendation restricted">
+            <span>🤖</span>
+            <span id="aiRecommendation">Loading AI recommendation...</span>
+          </div>
+          <div class="score-improvement" onclick="getScoreImprovementTips('${requestId}', '${businessName}', '${naicsCode}', '${confidenceCode}')" style="cursor: pointer;">📊 Score improvement: ${confidenceCode} → ${Number(confidenceCode) + 2}</div>
+        </div>
+      `;
       
       fetch('/api/gemini/test-short-recommendation')
         .then(res => res.text())
@@ -707,22 +835,137 @@
               const cleanReason = reason.replace('**Reason:**', '').trim();
               const cleanRecommendation = recommendation ? recommendation.trim() : 'Improve data quality';
               
-              cardsContainer.innerHTML = `
-                <div class="card">
-                  <h3>Why Not Eligible</h3>
-                  <p>${cleanReason}</p>
-                  <h3>Recommendation</h3>
-                  <p>${cleanRecommendation}</p>
-                </div>
-              `;
+              document.getElementById('whyNotEligible').innerHTML = cleanReason;
+              document.getElementById('aiRecommendation').innerHTML = cleanRecommendation;
+              
+
             }
           } catch (e) {
-            cardsContainer.innerHTML = '<div style="color:red">Failed to parse recommendation.</div>';
+            document.getElementById('whyNotEligible').innerHTML = 'Failed to load reason';
+            document.getElementById('aiRecommendation').innerHTML = 'Improve data accuracy';
+
           }
         })
         .catch(() => {
-          cardsContainer.innerHTML = '<div style="color:red">Failed to load recommendation.</div>';
+          document.getElementById('whyNotEligible').innerHTML = 'Failed to load reason';
+          document.getElementById('aiRecommendation').innerHTML = 'Improve data quality';
+
         });
+    }
+
+    function getScoreImprovementTips(requestId, businessName, naicsCode, confidenceCode) {
+      const improvementCard = document.getElementById('improvementCard');
+      improvementCard.style.display = 'block';
+      improvementCard.innerHTML = `
+        <div class="ai-insight-card" style="border-left: 4px solid #3b82f6;">
+          <div class="insight-header">
+            <span class="insight-icon">📊</span>
+            <span class="insight-title">Score Improvement: ${confidenceCode} → ${Number(confidenceCode) + 2}</span>
+          </div>
+          <div style="background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin-top: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="color: #ef4444;">🎯</span>
+              <span style="font-weight: 600; color: #1f2937;">AI Score Improvement Tips</span>
+            </div>
+            <div style="color: #3b82f6;">Loading detailed improvement recommendations...</div>
+          </div>
+        </div>
+      `;
+      
+      const payload = {
+        businessType: businessName,
+        naicsCode: naicsCode,
+        currentScore: confidenceCode,
+        requestType: 'detailed_score_improvement'
+      };
+      
+      fetch('/api/gemini/recommendations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.text())
+        .then(responseText => {
+          try {
+            const json = JSON.parse(responseText);
+            let improvements = [];
+            
+            if (json.candidates && json.candidates[0]?.content?.parts[0]?.text) {
+              const aiText = json.candidates[0].content.parts[0].text;
+              improvements = aiText.split(/\n[-•*]\s*/).filter(tip => tip.trim().length > 10).slice(0, 4);
+            }
+            
+            // Ensure we have at least 3-4 detailed tips
+            if (improvements.length < 3) {
+              improvements = [
+                'Verify and update all company contact information including phone, address, and business registration details',
+                'Ensure NAICS codes accurately reflect primary business activities and update secondary codes if needed', 
+                'Complete missing data fields in business registration and provide additional documentation for verification',
+                'Review and correct any data inconsistencies between different business databases and registrations'
+              ];
+            }
+            
+            improvementCard.innerHTML = `
+              <div class="ai-insight-card" style="border-left: 4px solid #3b82f6;">
+                <div class="insight-header">
+                  <span class="insight-icon">📊</span>
+                  <span class="insight-title">Score Improvement: ${confidenceCode} → ${Number(confidenceCode) + 2}</span>
+                </div>
+                <div style="background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin-top: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="color: #ef4444;">🎯</span>
+                    <span style="font-weight: 600; color: #1f2937;">AI Score Improvement Tips</span>
+                  </div>
+                  <ul style="margin: 0; padding-left: 20px; color: #374151; line-height: 1.5;">
+                    ${improvements.map(tip => `<li style="margin-bottom: 6px;">${tip.trim()}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+            `;
+          } catch (e) {
+            // Detailed fallback tips
+            const detailedTips = [
+              'Verify and update all company contact information including phone, address, and business registration details',
+              'Ensure NAICS codes accurately reflect primary business activities and update secondary codes if needed', 
+              'Complete missing data fields in business registration and provide additional documentation for verification',
+              'Review and correct any data inconsistencies between different business databases and registrations'
+            ];
+            
+            improvementCard.innerHTML = `
+              <div class="ai-insight-card" style="border-left: 4px solid #3b82f6;">
+                <div class="insight-header">
+                  <span class="insight-icon">📊</span>
+                  <span class="insight-title">Score Improvement: ${confidenceCode} → ${Number(confidenceCode) + 2}</span>
+                </div>
+                <div style="background: #e0f2fe; border: 1px solid #0ea5e9; border-radius: 8px; padding: 12px; margin-top: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="color: #ef4444;">🎯</span>
+                    <span style="font-weight: 600; color: #1f2937;">AI Score Improvement Tips</span>
+                  </div>
+                  <ul style="margin: 0; padding-left: 20px; color: #374151; line-height: 1.5;">
+                    ${detailedTips.map(tip => `<li style="margin-bottom: 6px;">${tip}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+            `;
+          }
+        })
+        .catch(() => {
+          improvementCard.innerHTML = '<div style="color: red;">Failed to load improvement tips.</div>';
+        });
+    }
+
+    function generateAIInsights() {
+      const insightsContainer = document.getElementById('aiInsights');
+      const eligibleCompany = companiesData.find(c => Number(c.matchingData?.['Confidence Code']) >= 5) || companiesData[0];
+      
+      // Show only restricted card when clicked
+      insightsContainer.innerHTML = `
+        <div class="ai-insights-grid">
+          <div id="restrictedCard" style="display: none;"></div>
+          <div id="improvementCard" style="display: none;"></div>
+        </div>
+      `;
     }
 </script>
 </body>
