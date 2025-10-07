@@ -24,7 +24,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /
 
 # Copy the built JAR to the runtime container
-COPY --from=build /target/search-api.jar /search-api.jar
+COPY --from=build /app/target/search-api.jar /search-api.jar
 
 # Expose the port your app runs on
 EXPOSE 8080
