@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.vm.api</groupId>
-	<artifactId>search-api</artifactId>
+	<artifactId>appetite-check-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Naics-demo</name>
 	<description>NAICS demo project with H2 database</description>

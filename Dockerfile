@@ -12,21 +12,21 @@ WORKDIR /
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Copy the rest of the source code
+# Copy the rest of the application source
 COPY src ./src
 
-# Build the application and skip tests (optional)
+# Package the app (skip tests for faster build)
 RUN mvn clean package -DskipTests
 
-# Runtime stage: Use a slim JRE image
+# Runtime stage: Use slim JRE image
 FROM eclipse-temurin:21-jre
 
 WORKDIR /
 
-# Copy the built JAR to the runtime container
-COPY --from=build /app/target/search-api.jar /search-api.jar
+# Copy the built JAR from the build stage
+COPY --from=build /target/*.jar appetite-check-api.jar
 
-# Expose the port your app runs on
+# Expose port if needed
 EXPOSE 8080
 
 # Run the Spring Boot app
